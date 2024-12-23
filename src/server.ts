@@ -13,8 +13,12 @@ import {
   handleUnhandledRejections,
 } from './utils/errorLogger';
 import { scheduleLogCleanup } from './utils/scheduler';
+import { redisRateLimiterMiddleware } from './utils/rateLimitRedis';
 
 const app = express();
+
+// Rate Limiter Middleware
+app.use(redisRateLimiterMiddleware);
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
