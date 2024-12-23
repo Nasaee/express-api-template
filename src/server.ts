@@ -3,9 +3,16 @@ import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
 
 import rootRouter from './routes/rootRouter';
 import { errorHandlerMiddleware } from './middlewares/errors.middleware';
+import {
+  handleUncaughtExceptions,
+  handleUnhandledRejections,
+} from './utils/errorLogger';
+import { scheduleLogCleanup } from './utils/scheduler';
 
 const app = express();
 
@@ -43,6 +50,13 @@ app.use((req, res, next) => {
 });
 
 app.use(errorHandlerMiddleware);
+
+// Schedule Daily Log Cleanup
+scheduleLogCleanup();
+
+// Handle uncaught exceptions and unhandled promise rejections
+handleUncaughtExceptions();
+handleUnhandledRejections();
 
 // Start the server
 const PORT = process.env.PORT || 5000;
