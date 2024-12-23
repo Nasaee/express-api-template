@@ -26,6 +26,10 @@ app.use(morgan('dev'));
 // HIDDEN SENSITIVE HEADER INFO
 app.use(helmet());
 
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
 app.use('/api/v1', rootRouter);
 
 const PORT = process.env.PORT || 5000;

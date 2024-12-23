@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb-test
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: .
+    container_name: express-api
+    restart: always
+    ports:
+      - '8000:8000'
+    environment:
+      DATABASE_URL: mongodb://root:password@mongodb:27017/your-database?authSource=admin
+      NODE_ENV: production
+      PORT: 8000
+    volumes:
+      - .:/usr/src/app # For development mode (remove or comment for strict production)
+      - /usr/src/app/node_modules # For development mode (remove or comment for strict production)
+    command: npm run start
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo-data:

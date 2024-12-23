@@ -1,14 +1,26 @@
 {
-  "name": "express-api-templete",
+  "name": "express-api-template",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/server.ts"
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "generate": "npx prisma generate",
+    "build": "npm run generate && tsc",
+    "start": "node dist/server.js",
+    "deploy": "npm run build && npm run start",
+    "pm2:start": "pm2-runtime start dist/server.js -i max --name express-api"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "express",
+    "typescript",
+    "prisma",
+    "mongodb",
+    "pm2",
+    "docker"
+  ],
+  "author": "Your Name",
   "license": "ISC",
-  "description": "",
+  "description": "Production-ready Express API with TypeScript, Prisma, MongoDB, Docker, and PM2.",
   "dependencies": {
     "@prisma/client": "^6.1.0",
     "cors": "^2.8.5",
