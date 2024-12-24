@@ -3,9 +3,10 @@ import { signUpSchema } from '../../schemas/signUp.schema';
 import db from '../../db/db';
 import { BadRequestException } from '../../exceptions/BadRequestException';
 import { ErrorCode } from '../../exceptions/RootExceptions';
-import jwt from 'jsonwebtoken';
 import { InternalErrorException } from '../../exceptions/InternalError';
 import PasswordUtil from '../../utils/classes/PasswordUtil';
+import { signInSchema } from '../../schemas/signIn.schema';
+import { generateToken } from '../../utils/generateToken';
 
 const signUpController = async (
   req: Request,
@@ -43,9 +44,7 @@ const signUpController = async (
       },
     });
 
-    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET!, {
-      expiresIn: process.env.JWT_EXPIRATION,
-    });
+    const token = generateToken(newUser.id);
 
     res
       .cookie('authToken', token, {
@@ -58,11 +57,56 @@ const signUpController = async (
       .json({ message: 'User created successfully' });
   } catch (error) {
     console.log(error);
-
-    next(new InternalErrorException('Error creating user', error));
+    throw new InternalErrorException('Error creating user', error);
   }
 };
 
-const loginController = async (req: Request, res: Response) => {};
+const loginController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = signInSchema.parse(req.body);
+
+  try {
+    const user = await db.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return next(
+        new BadRequestException(
+          'Invalid email or password',
+          ErrorCode.INVALID_CREDENTIALS
+        )
+      );
+    }
+
+    const isPasswordValid = await PasswordUtil.comparePassword(
+      password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      return next(
+        new BadRequestException(
+          'Invalid email or password',
+          ErrorCode.INVALID_CREDENTIALS
+        )
+      );
+    }
+
+    const token = generateToken(user.id);
+
+    res
+      .cookie('authToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge:
+          (parseInt(process.env.JWT_EXPIRATION as string, 10) || 1) * 3600000,
+      })
+      .send({ message: 'Login successful' });
+  } catch (error) {
+    next(new InternalErrorException('Error creating user', error));
+  }
+};
 
 export { signUpController, loginController };

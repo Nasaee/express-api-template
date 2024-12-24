@@ -13,11 +13,10 @@ export const scheduleLogCleanup = () => {
     () => {
       console.log('🕒 Running scheduled log cleanup...');
       deleteOldLogs(logDirectory);
+      console.log('✅ Log cleanup scheduled daily at 3:00 AM (UTC).');
     },
     null, // onComplete (optional cleanup callback, not needed here)
     true, // Start the job right after initialization
     'UTC' // Timezone
   );
-
-  console.log('✅ Log cleanup scheduled daily at 3:00 AM (UTC).');
 };

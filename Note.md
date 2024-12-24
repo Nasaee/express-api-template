@@ -68,3 +68,5 @@ npm install <package-name> && docker-compose build api && docker-compose up -d
 docker-compose build --no-cache
 docker-compose up -d
 ```
+
+unexpiredToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NmFkMGY0ZjRmZTcwNzZlNjUzNGVmZSIsImlhdCI6MTczNTA1MzU1N30.1NTUsWylQVOwhqhA-HlS2-f9zgDbl0rM9ezUBLujnyc"
