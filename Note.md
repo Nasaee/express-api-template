@@ -61,3 +61,10 @@ npm install <package-name> && docker-compose exec api npm install
 ```bash
 npm install <package-name> && docker-compose build api && docker-compose up -d
 ```
+
+## To Build and Start Container
+
+```bash
+docker-compose build --no-cache
+docker-compose up -d
+```
