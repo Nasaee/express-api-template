@@ -20,7 +20,7 @@ const signUpController = async (
     );
 
     const existingUser = await db.user.findUnique({
-      where: { email, firstName, lastName, password: password },
+      where: { email },
     });
 
     if (existingUser) {
