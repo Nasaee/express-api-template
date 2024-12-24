@@ -22,9 +22,7 @@ const authMiddleware = async (
 ) => {
   const token = req.header('Authorization');
   if (!token) {
-    return next(
-      new BadRequestException('Token not found', ErrorCode.TOKEN_NOT_FOUND)
-    );
+    return next(new UnauthorizedException('Unauthorized'));
   }
 
   try {
