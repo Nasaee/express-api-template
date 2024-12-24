@@ -13,10 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Define Role Enum
+enum Role {
+  USER // Regular user with basic access
+  ADMIN // Full administrative access
+  GUEST // Limited access
+}
+
 model User {
-  id        String @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid()) @map("_id")
   firstName String
   lastName  String
-  email     String @unique
+  email     String   @unique
   password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

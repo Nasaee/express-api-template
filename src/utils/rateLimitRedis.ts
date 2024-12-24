@@ -1,4 +1,5 @@
 import { RateLimiterRedis } from 'rate-limiter-flexible';
+import redisClient from '../db/redisClient';
 
 export const rateLimiter = new RateLimiterRedis({
   storeClient: redisClient,

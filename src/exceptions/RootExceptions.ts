@@ -7,6 +7,10 @@ export enum ErrorCode {
   PATH_NOT_FOUND = 1006,
   FORBIDDEN = 1007,
   UNPROCESSABLE_ENTITY = 1008,
+  TOKEN_NOT_FOUND = 1009,
+  USER_NOT_FOUND = 1010,
+  TOKEN_EXPIRED = 1011,
+  USER_ALREADY_EXISTS = 1012,
 }
 
 export class HttpException extends Error {

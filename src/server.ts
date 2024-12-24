@@ -13,12 +13,13 @@ import {
   handleUnhandledRejections,
 } from './utils/errorLogger';
 import { scheduleLogCleanup } from './utils/scheduler';
-import { redisRateLimiterMiddleware } from './utils/rateLimitRedis';
+import { rateLimitMiddleware } from './middlewares/rateLimit.middleware';
 
 const app = express();
 
 // Rate Limiter Middleware
-app.use(redisRateLimiterMiddleware);
+app.use(rateLimitMiddleware(100, 10));
+// app.use(redisRateLimiterMiddleware);
 
 // Middleware to parse JSON and URL-encoded data
 app.use(express.json());
@@ -30,7 +31,7 @@ app.use(
     origin: ['http://localhost', process.env.CLIENT_URL!],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    // credentials: true,
   })
 );
 
