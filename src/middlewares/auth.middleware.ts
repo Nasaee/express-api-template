@@ -58,11 +58,9 @@ const authMiddleware = async (
     return next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return next(
-        new UnauthorizedException('Token expired', ErrorCode.TOKEN_EXPIRED)
-      );
+      throw new UnauthorizedException('Token expired', ErrorCode.TOKEN_EXPIRED);
     }
-    return next(new UnauthorizedException('Unauthorized'));
+    throw new UnauthorizedException('Unauthorized');
   }
 };
 

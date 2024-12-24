@@ -105,7 +105,7 @@ const loginController = async (
       })
       .send({ message: 'Login successful' });
   } catch (error) {
-    next(new InternalErrorException('Error creating user', error));
+    throw new InternalErrorException('Error creating user', error);
   }
 };
 
