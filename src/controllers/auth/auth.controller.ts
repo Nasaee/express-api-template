@@ -4,9 +4,9 @@ import db from '../../db/db';
 import { BadRequestException } from '../../exceptions/BadRequestException';
 import { ErrorCode } from '../../exceptions/RootExceptions';
 import { InternalErrorException } from '../../exceptions/InternalError';
-import PasswordUtil from '../../utils/classes/PasswordUtil';
+import PasswordUtil from '../../services/password.service';
 import { signInSchema } from '../../schemas/signIn.schema';
-import { generateToken } from '../../utils/generateToken';
+import { generateToken } from '../../services/generateToken.service';
 
 const signUpController = async (
   req: Request,
