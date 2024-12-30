@@ -109,4 +109,10 @@ const loginController = async (
   }
 };
 
-export { signUpController, loginController };
+const logoutController = async (req: Request, res: Response) => {
+  res
+    .cookie('authToken', '', { expires: new Date(0) })
+    .send({ message: 'Logout successful' });
+};
+
+export { signUpController, loginController, logoutController };
