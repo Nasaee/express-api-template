@@ -61,6 +61,8 @@ scheduleLogCleanup();
 
 // Handle uncaught exceptions and unhandled promise rejections
 handleUncaughtExceptions();
+
+// Handle unhandled promise rejections
 handleUnhandledRejections();
 
 // Start the server

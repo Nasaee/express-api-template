@@ -22,7 +22,7 @@ const getLogFileName = (): string => {
  * Logs an error message to a file with proper formatting and timestamp.
  * @param message - The error message to log.
  */
-const logErrorToFile = async (message: string) => {
+export const logErrorToFile = async (message: string) => {
   try {
     const logDir = path.join(__dirname, '../../log');
     await mkdirAsync(logDir, { recursive: true });
@@ -41,7 +41,7 @@ const logErrorToFile = async (message: string) => {
  */
 export const handleUncaughtExceptions = () => {
   process.on('uncaughtException', async (err) => {
-    const errorMessage = `🔥 Uncaught Exception: ${err}`;
+    const errorMessage = `🔥 Uncaught Exception: ${err.stack || err}`;
     console.error(errorMessage);
 
     await logErrorToFile(errorMessage);
