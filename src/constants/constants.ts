@@ -1,3 +1,0 @@
-const PASSWORD_MIN_LENGTH = 6;
-
-export { PASSWORD_MIN_LENGTH };

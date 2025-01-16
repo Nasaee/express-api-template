@@ -3,37 +3,10 @@ import { ErrorCode, HttpException } from '../exceptions/RootExceptions';
 import { ZodError } from 'zod';
 import { BadRequestException } from '../exceptions/BadRequestException';
 import { InternalErrorException } from '../exceptions/InternalError';
-export const errorHandlerMiddleware = (
-  error: HttpException,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (error instanceof HttpException) {
-    res.status(error.statusCode).json({
-      message: error.message,
-      errorCode: error.errorCode,
-      errors: error.errors,
-    });
-  } else {
-    res.status(500).json({
-      message: 'Internal server error',
-      errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
-    });
-  }
-
-  // Handle uncaught exceptions
-  process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exit(1);
-  });
-
-  // Handle unhandled promise rejections
-  process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);
-  });
-};
+import {
+  handleUncaughtExceptions,
+  handleUnhandledRejections,
+} from '../utils/errorLogger';
 
 export const errorHandler = (method: Function) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -57,4 +30,30 @@ export const errorHandler = (method: Function) => {
       next(exception);
     }
   };
+};
+
+export const errorHandlerMiddleware = (
+  error: HttpException,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (error instanceof HttpException) {
+    res.status(error.statusCode).json({
+      message: error.message,
+      errorCode: error.errorCode,
+      errors: error.errors,
+    });
+  } else {
+    res.status(500).json({
+      message: 'Internal server error',
+      errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
+    });
+  }
+
+  // Handle uncaught exceptions
+  handleUncaughtExceptions();
+
+  // Handle unhandled promise rejections
+  handleUnhandledRejections();
 };

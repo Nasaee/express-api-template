@@ -41,7 +41,7 @@ const logErrorToFile = async (message: string) => {
  */
 export const handleUncaughtExceptions = () => {
   process.on('uncaughtException', async (err) => {
-    const errorMessage = `🔥 Uncaught Exception: ${err.stack || err.message}`;
+    const errorMessage = `🔥 Uncaught Exception: ${err}`;
     console.error(errorMessage);
 
     await logErrorToFile(errorMessage);

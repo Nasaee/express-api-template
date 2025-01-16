@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestException } from '../exceptions/BadRequestException';
 import { ErrorCode } from '../exceptions/RootExceptions';
 
 import jwt from 'jsonwebtoken';
 import db from '../db/db';
 import { User } from '@prisma/client';
 import { UnauthorizedException } from '../exceptions/UnauthorizedException';
+import { generateToken } from '../services/generateToken.service';
+import { EXPIRES_IN_MINUTES } from '../configs/constants';
 
 declare global {
   namespace Express {
@@ -20,12 +21,13 @@ const authMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header('Authorization');
-  if (!token) {
-    return next(new UnauthorizedException('Unauthorized'));
-  }
-
   try {
+    const token = req.header('Authorization')?.replace(/^Bearer\s/i, ''); // remove Bearer from token (i is for case-insensitive)
+
+    if (!token) {
+      return next(new UnauthorizedException('Unauthorized'));
+    }
+
     const payload = jwt.verify(
       token,
       process.env.JWT_SECRET!
@@ -52,11 +54,25 @@ const authMiddleware = async (
       );
     }
 
+    // Refresh token only if it's about to expire.
+    const timeToExpire = payload.exp! * 1000 - Date.now();
+    const REFRESH_THRESHOLD = 5 * 60 * 1000; // 5 minutes
+    // Check if the token is close to expiration
+    if (timeToExpire < REFRESH_THRESHOLD) {
+      const newToken = generateToken(user.id);
+      res.cookie('authToken', newToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: EXPIRES_IN_MINUTES * 60 * 1000,
+      });
+      req.headers.authorization = `Bearer ${newToken}`;
+    }
+
     req.user = user;
     return next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      throw new UnauthorizedException('Token expired', ErrorCode.TOKEN_EXPIRED);
+      throw new UnauthorizedException('Unauthorized', ErrorCode.TOKEN_EXPIRED);
     }
     throw new UnauthorizedException('Unauthorized');
   }

@@ -7,6 +7,7 @@ import { InternalErrorException } from '../../exceptions/InternalError';
 import PasswordUtil from '../../services/password.service';
 import { signInSchema } from '../../schemas/signIn.schema';
 import { generateToken } from '../../services/generateToken.service';
+import { EXPIRES_IN_MINUTES } from '../../configs/constants';
 
 const signUpController = async (
   req: Request,
@@ -100,8 +101,7 @@ const loginController = async (
       .cookie('authToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge:
-          (parseInt(process.env.JWT_EXPIRATION as string, 10) || 1) * 3600000,
+        maxAge: EXPIRES_IN_MINUTES * 60 * 1000, // 10 minutes
       })
       .send({ message: 'Login successful' });
   } catch (error) {
